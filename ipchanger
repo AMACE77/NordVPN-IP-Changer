@@ -1,0 +1,16 @@
+#! /bin/bash
+
+while true; do
+    output=$(nordvpn connect us)
+    if [[ $output == *"The VPN connection has failed."* ]]; then
+        echo "VPN connection failed. Restarting..."
+        nordvpn disconnect
+        sleep 5  # Wait for a few seconds before reconnecting
+        nordvpn connect us
+    else
+        vpn_info=$(echo "$output" | grep -oE 'us[0-9]+' | head -n1)
+        public_ip=$(curl -s ifconfig.me)
+        echo "VPN connection successful. VPN Number: $vpn_info, Public IP: $public_ip"
+    fi
+    sleep 180  # Sleep for 3 minutes
+done
